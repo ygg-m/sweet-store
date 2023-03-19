@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { AuthProvider } from "./Contexts/AuthContext";
+import { StoreProvider } from "./Contexts/StoreContext";
 import "./Styles/index.css";
 
 const root = ReactDOM.createRoot(
@@ -8,7 +10,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <StrictMode>
-    <App />
+    <StoreProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </StoreProvider>
   </StrictMode>
 );
 
