@@ -1,7 +1,8 @@
 import { product } from "./products";
 
-export interface user {
-  email: string;
-  name: string;
-  cart: product[];
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
 }

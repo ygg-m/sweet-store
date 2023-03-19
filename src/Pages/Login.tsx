@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 
 export const Login = () => {
-  const { login, loading, loggedIn } = useAuth();
+  const { login, loading, user } = useAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [cantLogin, setCantLogin] = useState<boolean>(true);
@@ -84,7 +84,7 @@ export const Login = () => {
               Not registered yet?
             </Link>
 
-            {loggedIn && <Navigate to="/" replace={true} />}
+            {user ? <Navigate to="/" replace={true} /> : null}
           </div>
         </div>
       </div>

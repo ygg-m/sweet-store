@@ -2,6 +2,7 @@ import { useStore } from "./Contexts/StoreContext";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home, Login, Register } from "./Pages";
+import { Cart } from "./Pages/Cart";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/cart",
+    element: <Cart />,
   },
 ]);
 

@@ -1,18 +1,15 @@
 import { Navigate } from "react-router";
-import { Card, Navbar } from "../Components";
+import { Navbar, Products } from "../Components";
 import { useAuth } from "../Contexts/AuthContext";
 
 export const Home = () => {
-  const { loggedIn } = useAuth();
+  const { user } = useAuth();
+
   return (
     <div>
       <Navbar />
-      <div className="flex min-h-[calc(100vh-66px)] flex-wrap items-center justify-center gap-8 bg-neutral p-8">
-        <Card />
-        <Card />
-        <Card />
-      </div>
-      {!loggedIn && <Navigate to="/login" replace={true} />}
+      <Products />
+      {!user ? <Navigate to="/login" replace={true} /> : ""}
     </div>
   );
 };

@@ -1,2 +1,2 @@
-export { product } from "./products";
-export { user } from "./users";
+export { CartProduct, product } from "./products";
+export { User } from "./users";

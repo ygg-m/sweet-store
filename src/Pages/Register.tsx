@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 
 export const Register = () => {
-  const { createUser, loading, loggedIn } = useAuth();
+  const { createUser, loading, user } = useAuth();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -97,7 +97,7 @@ export const Register = () => {
             <Link to="/login" className="link text-center">
               Already a member?
             </Link>
-            {loggedIn && <Navigate to="/" replace={true} />}
+            {user ? <Navigate to="/" replace={true} /> : null}
           </div>
         </div>
       </div>

@@ -4,19 +4,15 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router";
-import { firebaseApp } from "../firebase";
-import { user } from "../Types/index";
-import { useStore } from "./StoreContext";
+import { User } from "../Types";
 
 type AuthContextTypes = {
   createUser: Function;
   login: Function;
   logout: Function;
   loading: boolean;
-  loggedIn: boolean;
+  user: User | null;
 };
 
 const AuthContext = createContext<AuthContextTypes>({
@@ -24,7 +20,7 @@ const AuthContext = createContext<AuthContextTypes>({
   login: () => {},
   logout: () => {},
   loading: false,
-  loggedIn: false,
+  user: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -32,11 +28,21 @@ export const useAuth = () => useContext(AuthContext);
 type AuthContextProps = { children: React.ReactNode };
 
 export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
-  const { setUser } = useStore();
   const auth = getAuth();
 
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    getAuth().onAuthStateChanged((authUser) => {
+      if (authUser) {
+        const { uid, email, displayName, photoURL } = authUser;
+        setUser({ uid, email, displayName, photoURL });
+      } else {
+        setUser(null);
+      }
+    });
+  }, []);
 
   function createUser(email: string, password: string) {
     setLoading(true);
@@ -45,7 +51,6 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
         // Signed in
         setLoading(false);
         const user = userCredential.user;
-        setLoggedIn(true);
         // ...
       })
       .catch((error) => {
@@ -64,11 +69,6 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
       .then((userCredential) => {
         // Signed in
         setLoading(false);
-        setLoggedIn(true);
-
-        const user = userCredential.user;
-        console.log(user);
-        setUser(user);
         // ...
       })
       .catch((error) => {
@@ -85,7 +85,6 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
-        setLoggedIn(false);
       })
       .catch((error) => {
         // An error happened.
@@ -97,7 +96,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     login,
     logout,
     loading,
-    loggedIn,
+    user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
