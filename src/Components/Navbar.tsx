@@ -1,4 +1,8 @@
+import { useAuth } from "../Contexts/AuthContext";
+
 export const Navbar = () => {
+  const { logout } = useAuth();
+
   const Dropdown = () => {
     return (
       <div
@@ -64,7 +68,7 @@ export const Navbar = () => {
               <a>Settings</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={() => logout()}>Logout</a>
             </li>
           </ul>
         </div>

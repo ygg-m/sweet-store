@@ -85,6 +85,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
     signOut(auth)
       .then(() => {
         // Sign-out successful.
+        setLoggedIn(false);
       })
       .catch((error) => {
         // An error happened.

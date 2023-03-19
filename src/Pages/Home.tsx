@@ -1,6 +1,9 @@
+import { Navigate } from "react-router";
 import { Card, Navbar } from "../Components";
+import { useAuth } from "../Contexts/AuthContext";
 
 export const Home = () => {
+  const { loggedIn } = useAuth();
   return (
     <div>
       <Navbar />
@@ -9,6 +12,7 @@ export const Home = () => {
         <Card />
         <Card />
       </div>
+      {!loggedIn && <Navigate to="/login" replace={true} />}
     </div>
   );
 };
