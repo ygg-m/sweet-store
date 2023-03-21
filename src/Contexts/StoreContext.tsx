@@ -50,10 +50,14 @@ export const StoreProvider: React.FC<StoreContextProps> = ({ children }) => {
 
   const getCart = async () => {
     const data = await getDocs(cartCollectionRef);
-    const refinedData = data.docs.map((doc) => {
-      if (doc.id === user?.uid) return doc.data().products;
-    })[0];
-    setCart(refinedData);
+    const refinedData =
+      data.docs.find((doc) => doc.id === user?.uid)?.data().products || [];
+
+    if (refinedData.length === 0) {
+      setCart([]);
+    } else {
+      setCart(refinedData);
+    }
   };
 
   useEffect(() => {
