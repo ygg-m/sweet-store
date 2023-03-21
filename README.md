@@ -10,11 +10,11 @@
 
 # 🚀 Access
 
-The website is hosted by `Firebase` at: https://ygg-store.web.app/
+The website is hosted by `Firebase` at: https://store-ef9df.web.app/
 
 # 🎯 Goals
 
-- [ ] Publish
+- [x] Publish
 - [x] Show Items
 - [x] Use Firebase Database
 - [x] Register Users
