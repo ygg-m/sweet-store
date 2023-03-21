@@ -9,13 +9,14 @@ export const Cart = () => {
   const { user } = useAuth();
   const { cart, addCartItem, removeCartItem } = useStore();
 
-  const [subtotal, setSubtotal] = useState<string>("0");
+  const [subtotal, setSubtotal] = useState<number>(0);
 
   useEffect(() => {
+    let newSubtotal: number = 0;
+
     cart?.forEach((prod) => {
-      const value = prod.product.value * prod.quantity;
-      console.log(prod.product.value.toFixed(2));
-      setSubtotal(value.toFixed(2));
+      newSubtotal += prod.product.value * prod.quantity;
+      setSubtotal(newSubtotal);
     });
   }, [cart]);
 
@@ -45,11 +46,11 @@ export const Cart = () => {
               >
                 <div className="flex items-center gap-2">
                   <span>{prod.product.name}</span>$
-                  {(prod.quantity * prod.product.value).toFixed(2)}
+                  {prod.quantity * prod.product.value}
                 </div>
                 <span className="grid grid-cols-3 items-center gap-2 font-medium">
                   <button
-                    className="btn-primary btn-square btn-sm btn"
+                    className="btn-primary btn-sm btn-square btn"
                     onClick={() => removeCartItem(prod.id)}
                   >
                     -
@@ -58,7 +59,7 @@ export const Cart = () => {
                     x{prod.quantity}
                   </span>
                   <button
-                    className="btn-primary btn-square btn-sm btn"
+                    className="btn-primary btn-sm btn-square btn"
                     onClick={() => addCartItem(prod.id, 1)}
                   >
                     +
@@ -88,6 +89,7 @@ export const Cart = () => {
               </Link>
             </div>
           </div>
+          <Link to="/" className="absolute -z-10 h-full w-full"></Link>
         </div>
       );
     else return null;
@@ -99,10 +101,7 @@ export const Cart = () => {
     return (
       <div>
         <Drawer />
-        <Navbar />{" "}
-        <Link to="/" className="btn-primary btn-block btn w-fit">
-          Finish
-        </Link>
+        <Navbar />
         <Products />
       </div>
     );
