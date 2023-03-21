@@ -44,7 +44,7 @@ export const Cart = () => {
         </label>
         <div
           tabIndex={0}
-          className="dropdown-content card card-compact mt-3 w-52 bg-base-100 shadow"
+          className="card dropdown-content card-compact mt-3 w-52 bg-base-100 shadow"
         >
           <div className="card-body">
             <span className="text-lg font-bold">
@@ -66,13 +66,13 @@ export const Cart = () => {
                       <span className="font-medium">x{prod.quantity}</span>
                     </div>
                     <span className="font-medium">
-                      ${prod.quantity * prod.product.value}
+                      ${(prod.quantity * prod.product.value).toFixed(2)}
                     </span>
                   </div>
                 );
               })}
             </div>
-            <span className="text-info">Subtotal: ${subtotal}</span>
+            <span className="text-info">Subtotal: ${subtotal.toFixed(2)}</span>
             <div className="card-actions">
               <Link to="/cart" className="btn-primary btn-block btn">
                 Checkout

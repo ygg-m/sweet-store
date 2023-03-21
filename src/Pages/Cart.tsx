@@ -9,11 +9,13 @@ export const Cart = () => {
   const { user } = useAuth();
   const { cart, addCartItem, removeCartItem } = useStore();
 
-  const [subtotal, setSubtotal] = useState<number>(0);
+  const [subtotal, setSubtotal] = useState<string>("0");
 
   useEffect(() => {
     cart?.forEach((prod) => {
-      setSubtotal(prod.product.value * prod.quantity);
+      const value = prod.product.value * prod.quantity;
+      console.log(prod.product.value.toFixed(2));
+      setSubtotal(value.toFixed(2));
     });
   }, [cart]);
 
@@ -43,7 +45,7 @@ export const Cart = () => {
               >
                 <div className="flex items-center gap-2">
                   <span>{prod.product.name}</span>$
-                  {prod.quantity * prod.product.value}
+                  {(prod.quantity * prod.product.value).toFixed(2)}
                 </div>
                 <span className="grid grid-cols-3 items-center gap-2 font-medium">
                   <button
@@ -81,23 +83,26 @@ export const Cart = () => {
             </div>
             <div className="w-full">
               <span className="text-info">Subtotal: ${subtotal}</span>
-              <Link to="/cart" className="btn-primary btn-block btn">
+              <Link to="/" className="btn-primary btn-block btn">
                 Finish
               </Link>
             </div>
           </div>
-          <Link to="/" className="absolute -z-10 h-screen w-screen"></Link>
         </div>
       );
     else return null;
   };
 
   if (!user) return <Navigate to="/login" replace={true} />;
+
   if (cart)
     return (
       <div>
         <Drawer />
-        <Navbar />
+        <Navbar />{" "}
+        <Link to="/" className="btn-primary btn-block btn w-fit">
+          Finish
+        </Link>
         <Products />
       </div>
     );

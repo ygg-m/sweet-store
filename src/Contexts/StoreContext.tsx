@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   doc,
   getDoc,
@@ -9,19 +8,12 @@ import {
 } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { firebaseApp } from "../firebase";
-import { product } from "../Types/index";
+import { CartProduct, product } from "../Types/index";
 import { useAuth } from "./AuthContext";
-
-interface CartProduct {
-  product: { name: string; value: number };
-  quantity: number;
-  id: string;
-}
 
 type StoreContextTypes = {
   products: product[] | null;
   cart: CartProduct[] | null;
-  setCart: Function;
   addCartItem: Function;
   removeCartItem: Function;
 };
@@ -29,7 +21,6 @@ type StoreContextTypes = {
 const StoreContext = createContext<StoreContextTypes>({
   products: [],
   cart: [],
-  setCart: () => {},
   addCartItem: () => {},
   removeCartItem: () => {},
 });
@@ -68,12 +59,12 @@ export const StoreProvider: React.FC<StoreContextProps> = ({ children }) => {
   useEffect(() => {
     getCart();
     getProducts();
-  }, [user, cart]);
+  }, [user]);
 
-  const addCartItem = async (productId: string, quantity: number) => {
+  const addCartItem = async (productId: string, quantity?: number) => {
     if (!user) return;
 
-    const prod = products?.filter((p) => p.id === productId)[0];
+    const prod = products?.find((p) => p.id === productId);
 
     const cartRef = doc(dataBase, "cart", user.uid);
     const cartSnapshot = await getDoc(cartRef);
@@ -81,27 +72,30 @@ export const StoreProvider: React.FC<StoreContextProps> = ({ children }) => {
       ? cartSnapshot.data()
       : { products: [] };
 
-    let updatedProducts;
-
-    const existingItemIndex = cartData.products.findIndex(
-      (item: product) => item.id === productId
+    const existingItem = cartData.products.find(
+      (item: { id: string }) => item.id === productId
     );
 
-    if (existingItemIndex >= 0) {
-      updatedProducts = [...cartData.products];
-      updatedProducts[existingItemIndex].quantity += quantity;
-    } else {
-      updatedProducts = [
-        ...cartData.products,
-        {
-          id: productId,
-          product: { name: prod?.name, value: prod?.value },
-          quantity: quantity,
-        },
-      ];
-    }
+    const updatedProducts = existingItem
+      ? cartData.products.map((item: product) =>
+          item.id === productId
+            ? {
+                ...item,
+                quantity: (existingItem.quantity ?? 0) + (quantity ?? 1),
+              }
+            : item
+        )
+      : [
+          ...cartData.products,
+          {
+            id: productId,
+            product: { name: prod?.name, value: prod?.value },
+            quantity: quantity ?? 1,
+          },
+        ];
 
     await setDoc(cartRef, { products: updatedProducts });
+    getCart();
   };
 
   const removeCartItem = async (productId: string) => {
@@ -118,7 +112,8 @@ export const StoreProvider: React.FC<StoreContextProps> = ({ children }) => {
     );
     if (existingItemIndex >= 0) {
       let updatedProducts = [...cartData.products];
-      updatedProducts[existingItemIndex].quantity -= 1;
+      updatedProducts[existingItemIndex].quantity =
+        (updatedProducts[existingItemIndex].quantity ?? 1) - 1;
 
       if (updatedProducts[existingItemIndex].quantity === 0) {
         updatedProducts.splice(existingItemIndex, 1);
@@ -126,12 +121,12 @@ export const StoreProvider: React.FC<StoreContextProps> = ({ children }) => {
 
       await setDoc(cartRef, { products: updatedProducts });
     }
+    getCart();
   };
 
   const value: StoreContextTypes = {
     products,
     cart,
-    setCart,
     addCartItem,
     removeCartItem,
   };
